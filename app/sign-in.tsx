@@ -1,32 +1,126 @@
-import { View, Text, Image, TouchableOpacity} from 'react-native'
-import React from 'react'
+import { View, Text, TouchableOpacity, Pressable, Alert, TextInput} from 'react-native'
+import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import images from '@/constants/images'
+import { VStack } from '@/components/ui/vstack';
+import { router } from 'expo-router';
+import { ArrowLeftIcon, Icon } from '@/components/ui/icon';
+import { Heading } from '@/components/ui/heading';
+import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input';
+import axios from 'axios';
 
 const SignIn = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+
+  const handleSignin = async () => {
+    if (!email || !password) {
+      Alert.alert('Error ', 'Please fill in all fields');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await axios.post('http://your-ip:3000/api/login', {
+        email,
+        password,
+      });
+
+      if (response.data) {
+        // Here is where you save the token
+        // router.replace('/(app)/dashboard');
+      }
+    } catch (error) {
+      Alert.alert(
+        'Error',
+        (error as any).response?.data?.message || 'An error occurred'
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
     <SafeAreaView className="bg-white h-full">
-
         <View className="px-10 mt-12">
-          <Text className="text-6xl pt-2 font-poppins-extrabold tracking-tighter">Discover</Text>
-          <Text className="text-6xl text-red-300 font-poppins-extrabold tracking-widest pt-2">Your
-            <Text className="text-6xl font-poppins-exrabold text-black pt-2">
-              {" "}Style
-            </Text>
-          </Text>
 
-          <TouchableOpacity className="mt-8 bg-red-300 py-5 px-5 w-3/4 rounded-lg">
-            <Text className="font-poppins-bold text-xl text-center text-white">Sign me up</Text>
-          </TouchableOpacity>
-          {/* <Text className="text-sm mt-2 text-center">Already signed up? Login here</Text> */}
-        </View>
-        <Image source={images.hero} className="w-full h-[500px] absolute bottom-0" />
-        {/* <View className="w-full px-10">
-          <Text>Discover your Style</Text>
-        </View>
-        <View>
+          <VStack className="max-w-[440px] w-full" space="md">
+            <VStack className="md:items-center" space="md">
+              <Pressable onPress={() => {
+                router.back();
+              }}>
+                <Icon as={ArrowLeftIcon} className="text-background-800" />
+              </Pressable>
+              <VStack>
+                <Heading className="text-center font-poppins-extrabold" size="3xl">Log In</Heading>
+                <Text className="font-poppins text-center">Login to start using Fashion Hub</Text>
+              </VStack>
+            </VStack>
+              <VStack space="lg" className="mt-5">
 
-        </View> */}
+                <VStack space="sm">
+                  <Text className="font-poppins-medium">Email</Text>
+                  <Input
+                    variant="outline"
+                    size="md"
+                    isDisabled={false}
+                    isInvalid={false}
+                  >
+                    <InputField
+                      placeholder="Enter your email"
+                      value={email}
+                      onChangeText={text => setEmail(text)}
+                      // autoCompleteType="email"
+                      keyboardType="email-address"
+                      />
+                  </Input>
+                </VStack>
+                <VStack space="sm">
+                  <Text className="font-poppins-medium">Password</Text>
+                  <Input
+                    variant="outline"
+                    size="md"
+                    isDisabled={false}
+                    isRequired={true}
+                    isInvalid={false}
+                  >
+                    <InputField
+                      placeholder="Enter your password"
+                      value={password}
+                      onChangeText={text => setPassword(text)}
+                      secureTextEntry={true}
+                      // autoCompleteType="password"
+                      />
+                    <InputSlot>
+                      <InputIcon></InputIcon>
+                    </InputSlot>
+                  </Input>
+                </VStack>
+
+              <Text>{JSON.stringify({ name, email, password })}</Text>
+              </VStack>
+              <VStack className="w-full my-7" space="lg">
+                <TouchableOpacity
+                    onPress={handleSignin}
+                    disabled={isLoading}
+                    className="bg-black py-3 flex items-center justify-center"
+                  >
+                    <Text className="text-white font-poppins-bold text-lg">{isLoading ? 'Loggin in...' : 'Log in'}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    // onPress={handleSignin}
+                    disabled={isLoading}
+                    className="border-2 border-black py-3 flex items-center justify-center"
+                  >
+                    <Text className="font-poppins-bold text-lg">Continue with Google</Text>
+                  </TouchableOpacity>
+              </VStack>
+          </VStack>
+
+
+        </View>
 
     </SafeAreaView>
   )
