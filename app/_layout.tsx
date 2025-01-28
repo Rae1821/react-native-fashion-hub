@@ -1,9 +1,11 @@
-import { SplashScreen, Stack } from "expo-router";
+import { SplashScreen, Stack, Slot } from "expo-router";
+import { SessionProvider } from '../lib/ctx';
 import "@/app/globals.css";
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 import "./globals.css";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
+
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -26,5 +28,12 @@ export default function RootLayout() {
   if (!fontsLoaded) return null;
 
 
-  return <GluestackUIProvider mode="light"><Stack screenOptions={{ headerShown: false}} /></GluestackUIProvider>;
+  return (
+    <SessionProvider>
+      <GluestackUIProvider mode="light">
+         {/* <Slot /> */}
+        <Stack screenOptions={{ headerShown: false }}/>
+      </GluestackUIProvider>
+    </SessionProvider>
+  );
 }

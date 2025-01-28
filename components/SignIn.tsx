@@ -6,7 +6,8 @@ import { Redirect, router } from 'expo-router';
 import { ArrowLeftIcon, Icon } from '@/components/ui/icon';
 import { Heading } from '@/components/ui/heading';
 import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSession } from '@/lib/ctx';
 
 
@@ -23,17 +24,31 @@ const SignIn = () => {
       Alert.alert('Error ', 'Please fill in all fields');
       return;
     }
+
     setIsLoading(true);
+
     try {
-      await signIn(email, password);
-      // <Redirect href="/dashboard" />
-      router.replace('/dashboard');
+      const resp = await axios.post('http://192.168.0.42:3000/api/signin', {
+        email,
+        password,
+      });
+
+      if (resp.data) {
+
+
+        Alert.alert('Sign in successful')
+
+        // <Redirect href="/dashboard" />
+      }
     } catch (error) {
-      Alert.alert('Error ', 'An error occurred');
+      Alert.alert(
+        'Error',
+        (error as any).response?.data?.message || 'An error occurred'
+      );
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
   return (
     <SafeAreaView className="bg-white h-full">

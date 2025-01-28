@@ -1,12 +1,13 @@
-import { View, Text, TouchableOpacity, Pressable, Alert, TextInput} from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, TouchableOpacity, Pressable, Alert } from 'react-native'
+import React, { useContext, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { VStack } from '@/components/ui/vstack';
-import { Link, router } from 'expo-router';
+import { Link, Redirect, router } from 'expo-router';
 import { ArrowLeftIcon, Icon } from '@/components/ui/icon';
 import { Heading } from '@/components/ui/heading';
 import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const SignUp = () => {
@@ -20,8 +21,39 @@ const SignUp = () => {
             alert('All fields are required');
             return;
         }
-        const resp = await axios.post('http://localhost:8000/api/signup', { name, email, password });
-        alert("Sign Up Successful");
+        setIsLoading(true);
+
+      try {
+        const resp = await axios.post('http://192.168.0.42:3000/api/signup', { name, email, password });
+        if (resp.data) {
+          // console.log(resp.data)
+
+          Alert.alert("Signed Up Successful");
+          <Redirect href="/dashboard" />
+        }
+      } catch (error) {
+        console.error(error);
+        Alert.alert('Sign Up Failed');
+        if (axios.isAxiosError(error)) {
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            console.error('Response data:', error.response.data);
+            console.error('Response status:', error.response.status);
+            console.error('Response headers:', error.response.headers);
+          } else if (error.request) {
+            // The request was made but no response was received
+            console.error('Request data:', error.request);
+          } else {
+            // Something happened in setting up the request that triggered an Error
+            console.error('Error message:', error.message);
+          }
+        } else {
+          console.error('Unexpected error:', error);
+        }
+      } finally {
+        setIsLoading(false);
+      }
     };
 
   return (
@@ -96,11 +128,11 @@ const SignUp = () => {
               </Input>
             </VStack>
 
-          <Text>{JSON.stringify({ name, email, password })}</Text>
+          {/* <Text>{JSON.stringify({ name, email, password })}</Text> */}
           </VStack>
           <VStack className="w-full my-7" space="lg">
             <TouchableOpacity
-                // onPress={handleSignin}
+                onPress={handleSubmit}
                 disabled={isLoading}
                 className="bg-black py-3 flex items-center justify-center"
               >
