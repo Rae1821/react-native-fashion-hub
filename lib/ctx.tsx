@@ -1,24 +1,10 @@
-import { useContext, createContext, type PropsWithChildren } from 'react';
-import { useStorageState } from '../useStorageState';
+import { useContext, createContext, type PropsWithChildren, useState, useEffect } from 'react';
 import { Alert } from 'react-native';
-import axios from 'axios';
-import { Redirect } from 'expo-router';
+import { AuthContextType, AuthState, User, storage } from '@/utils/setStorage';
+import { router } from 'expo-router';
 
-interface AuthContextType {
-    signIn: (email: string, password: string) => Promise<void>;
-    signOut: () => void;
-    session: string | null;
-}
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// export function useAuth() {
-//     const context = useContext(AuthContext);
-//     if(!context) {
-//         throw new Error('useAuth must be used within a AuthProvider');
-//     }
-//     return context;
-// }
+const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 
 // This hook can be used to access the user info.
@@ -36,38 +22,81 @@ export function useSession() {
   }
 
 
-export function SessionProvider({ children }: PropsWithChildren) {
-    const [[iLoading, session], setSession] = useStorageState('session');
+export function AuthProvider({ children }: PropsWithChildren) {
+  const [authState, setAuthState] = useState<AuthState>({
+    token: null,
+    user: null,
+    isLoading: true,
+  });
 
+  useEffect(() => {
+    loadAuthState();
+  }, []);
 
-  const signIn = async (email: string, password: string) => {
+  const loadAuthState = async () => {
     try {
-      const resp = await axios.post('http://192.168.1.45:3000/api/signin', {
-        email,
-        password,
+      const [token, user] = await Promise.all([
+        storage.getToken(),
+        storage.getUser(),
+      ]);
+
+      setAuthState({
+        token,
+        user,
+        isLoading: false,
       });
-      if (resp.data) {
-        Alert.alert('Sign in successful');
-        setSession(resp.data.token);
-      }
+    } catch (error) {
+      setAuthState({
+        token: null,
+        user: null,
+        isLoading: false,
+      });
+    }
+  };
+
+
+
+  const signIn = async (token: string, user: User) => {
+    try {
+      await storage.saveToken(token);
+      await storage.saveUser(user);
+      setAuthState({
+        token,
+        user,
+        isLoading: false,
+      });
+      router.replace('/dashboard');
     } catch (error) {
       console.error(error);
       Alert.alert('Sign In Failed', (error as any).response?.data?.message || 'An error occurred');
     }
   };
 
-  const signOut = () => {
-    setSession(null);
-  }
+
+
+  const signOut = async () => {
+    try {
+      await storage.clearAuth();
+      setAuthState({
+        token: null,
+        user: null,
+        isLoading: false,
+      });
+    } catch (error) {
+      throw new Error('Failed to clear auth state');
+    }
+  };
 
     return (
       <AuthContext.Provider
         value={{
             signIn,
             signOut,
-            session,
+            ...authState,
         }}>
         {children}
       </AuthContext.Provider>
     );
   }
+
+  export const useAuth = (): AuthContextType => useContext(AuthContext)

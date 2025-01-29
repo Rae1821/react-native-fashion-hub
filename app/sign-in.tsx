@@ -1,13 +1,13 @@
-import { View, Text, TouchableOpacity, Pressable, Alert, TextInput} from 'react-native'
-import React, { useContext, useState } from 'react'
+import { View, Text, TouchableOpacity, Pressable, Alert } from 'react-native'
+import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { VStack } from '@/components/ui/vstack';
-import { Redirect, router } from 'expo-router';
+import { router } from 'expo-router';
 import { ArrowLeftIcon, Icon } from '@/components/ui/icon';
 import { Heading } from '@/components/ui/heading';
 import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSession } from '@/lib/ctx';
+import axios from 'axios';
 
 
 const SignIn = () => {
@@ -25,9 +25,13 @@ const SignIn = () => {
     }
     setIsLoading(true);
     try {
-      await signIn(email, password);
-      // <Redirect href="/dashboard" />
-      router.replace('/dashboard');
+      const response = await axios.post('http://10.20.0.84:3000/api/signin', {
+        email,
+        password,
+      });
+      const { token, user } = response.data;
+      await signIn(token, user);
+     router.replace('/(root)/(tabs)/dashboard');
     } catch (error) {
       Alert.alert('Error ', 'An error occurred');
     } finally {
@@ -92,7 +96,7 @@ const SignIn = () => {
                   </Input>
                 </VStack>
 
-              <Text>{JSON.stringify({ email, password })}</Text>
+              {/* <Text>{JSON.stringify({ email, password })}</Text> */}
               </VStack>
               <VStack className="w-full my-7" space="lg">
                 <TouchableOpacity

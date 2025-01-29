@@ -1,25 +1,26 @@
 import { View, Text } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import axios from 'axios';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuth } from '@/lib/ctx';
 
 const Dashboard = () => {
-  const [user, setUser] = useState(null);
+  const { user, token, signOut} = useAuth();
+  console.log(user?.email)
 
-  useEffect(() => {
-    axios.get('/api/user')
-      .then((response) => {
-        setUser(response.data);
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the user")
-      });
-  })
+  // useEffect(() => {
+  //   axios.get('/api/user')
+  //     .then((response) => {
+  //       setUser(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("There was an error fetching the user")
+  //     });
+  // })
 
   return (
     <SafeAreaView>
       <Text>Dashboard</Text>
-      <Text>Hello {user}</Text>
+      <Text>Hello {user?.name}</Text>
     </SafeAreaView>
   )
 }

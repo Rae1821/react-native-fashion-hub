@@ -1,5 +1,5 @@
 import { SplashScreen, Stack, Slot } from "expo-router";
-import { SessionProvider } from '../lib/ctx';
+import { AuthProvider } from '../lib/ctx';
 import "@/app/globals.css";
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 import "./globals.css";
@@ -29,11 +29,11 @@ export default function RootLayout() {
 
 
   return (
-    <SessionProvider>
+    <AuthProvider>
       <GluestackUIProvider mode="light">
-         {/* <Slot /> */}
+
         <Stack screenOptions={{ headerShown: false }}/>
       </GluestackUIProvider>
-    </SessionProvider>
+    </AuthProvider>
   );
 }
