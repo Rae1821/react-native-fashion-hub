@@ -69,5 +69,5 @@ export const storage = {
             console.error('Error clearing auth data:', error);
             throw error;
         }
-    }
+    },
 }

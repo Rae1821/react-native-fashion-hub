@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity, Pressable, Alert } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, TouchableOpacity, Pressable, Alert, Keyboard } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { VStack } from '@/components/ui/vstack';
 import { router } from 'expo-router';
@@ -8,14 +8,55 @@ import { Heading } from '@/components/ui/heading';
 import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input';
 import { useSession } from '@/lib/ctx';
 import axios from 'axios';
+import Checkbox from 'expo-checkbox';
+import * as SecureStore from 'expo-secure-store';
+
 
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isChecked, setChecked] = useState(false);
 
   const { signIn } = useSession();
+
+  const handleSaveEmail = async () => {
+    if (isChecked) {
+      // Save email to SecureStore
+      try {
+        await SecureStore.setItemAsync("userEmail", email);
+      } catch (error) {
+        console.error('Error saving email:', error);
+        throw error;
+    }
+  } else {
+    // Remove email from SecureStore
+    await SecureStore.deleteItemAsync("userEmail");
+  }
+};
+
+  useEffect(() => {
+    const getEmailFromStore = async () => {
+      try {
+        // Fetch email from SecureStore
+        const storedEmail = await SecureStore.getItemAsync("userEmail");
+
+        // If the email is found, prefill the email field
+        if (storedEmail) {
+          setEmail(storedEmail); // set the email field value
+          setChecked(true); // check the "Remember me" checkbox
+          console.log(storedEmail) // log the email to the console
+        } else {
+          console.log("Email not found in SecureStore");
+        }
+      } catch (error) {
+        console.log("Error fetching email from Se")
+      }
+    }
+    getEmailFromStore(); // Call the async function to fetch the email
+
+  }, []); // Empty dependency array ensures this runs once when the component mounts
 
 
   const handleSignin = async () => {
@@ -24,14 +65,17 @@ const SignIn = () => {
       return;
     }
     setIsLoading(true);
+    Keyboard.dismiss();
+    handleSaveEmail();
+
     try {
-      const response = await axios.post('http://10.20.0.84:3000/api/signin', {
+      const response = await axios.post('http://192.168.0.42:3000/api/signin', {
         email,
         password,
       });
       const { token, user } = response.data;
       await signIn(token, user);
-     router.replace('/(root)/(tabs)/dashboard');
+     router.replace('/dashboard');
     } catch (error) {
       Alert.alert('Error ', 'An error occurred');
     } finally {
@@ -94,8 +138,16 @@ const SignIn = () => {
                       <InputIcon></InputIcon>
                     </InputSlot>
                   </Input>
-                </VStack>
 
+                </VStack>
+              <VStack space="sm" className="flex flex-row mt-2 items-center">
+                 <Checkbox
+                    value={isChecked}
+                    onValueChange={setChecked}
+                    color={isChecked ? 'black' : undefined}
+                  />
+                  <Text className="font-poppins-medium">Remember Me</Text>
+              </VStack>
               {/* <Text>{JSON.stringify({ email, password })}</Text> */}
               </VStack>
               <VStack className="w-full my-7" space="lg">
