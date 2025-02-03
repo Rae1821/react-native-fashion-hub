@@ -199,3 +199,6 @@ module.exports = {
   },
   plugins: [gluestackPlugin],
 };
+
+
+// #00BD9D

@@ -29,7 +29,7 @@ const SignUp = () => {
           // console.log(resp.data)
 
           Alert.alert("Signed Up Successful");
-          <Redirect href="/dashboard" />
+          router.replace('/sign-in');
         }
       } catch (error) {
         console.error(error);

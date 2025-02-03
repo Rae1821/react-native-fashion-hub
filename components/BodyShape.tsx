@@ -1,27 +1,26 @@
-import { View, Text, TextInput, TouchableOpacity } from 'react-native'
+import { View, Text } from 'react-native'
 import React, { useState } from 'react'
-
-// import { Button, ButtonText } from './ui/button';
-// import { Heading } from './ui/heading';
 import { Input, InputField } from './ui/input';
-// import { Controller, useForm } from 'react-hook-form';
 import { VStack } from './ui/vstack';
 import { Button, ButtonText } from './ui/button';
-import { HStack } from './ui/hstack';
+import axios from 'axios';
+// import { updateUser } from '@/utils/helper';
+// import { useAuth } from '@/lib/ctx';
+import Checkbox from 'expo-checkbox';
 
 
-const BodyShape = () => {
+interface BodyShapeProps {
+  userId: string;
+  token: string;
+}
+
+const BodyShape: React.FC<BodyShapeProps> = ({ userId, token }) => {
   const [shapeResults, setShapeResults] = useState('');
   const [shoulders, setShoulders] = useState('');
   const [waist, setWaist] = useState('');
   const [hips, setHips] = useState('');
+  const [isChecked, setChecked] = useState(false);
 
-  // const { control, handleSubmit } = useForm();
-
-
-  // interface CalculateShapeEvent extends React.FormEvent<HTMLFormElement> {
-  //   target: EventTarget & HTMLFormElement;
-  // }
 
   const handleCalculateShape = () => {
 
@@ -48,6 +47,9 @@ const BodyShape = () => {
         console.log("Please fill in all fields");
       }
 
+      if(isChecked) {
+        handleSaveShape();
+      }
       return shapeResults;
     } catch (err) {
       console.log(err);
@@ -55,6 +57,19 @@ const BodyShape = () => {
   };
 
 
+// Save shape to database
+  const handleSaveShape = async () => {
+    try {
+      const response = await axios.put(`http://192.168.0.42:3000/api/user/${userId}`, { bodyShape: shapeResults }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log('User updated successfully:', response.data);
+    } catch (error) {
+      console.error('Error updating user:', error);
+    }
+  };
 
 
   const handleReset = () => {
@@ -111,6 +126,14 @@ const BodyShape = () => {
           />
         </Input>
       </VStack>
+      <View className="flex flex-row items-center mt-5 gap-2">
+       <Checkbox
+          value={isChecked}
+          onValueChange={setChecked}
+          color={isChecked ? 'black' : undefined}
+        />
+        <Text className="font-poppins">Save results to dashboard</Text>
+      </View>
       <View className="flex justify-end gap-4 items-center mt-5 flex-row">
         <Button onPress={handleReset} variant="outline">
             <ButtonText>Reset</ButtonText>
@@ -120,11 +143,10 @@ const BodyShape = () => {
           </Button>
       </View>
 
-      <View>
-      <Text>Your body shape is {" "}</Text>
-      <Text>{shapeResults}</Text>
+      <View className="mt-10 flex flex-row items-center">
+        <Text className="font-poppins">Your body shape is: {" "}</Text>
+        <Text className="font-poppins-bold text-lg">{shapeResults}</Text>
       </View>
-
     </View>
   )
 }
