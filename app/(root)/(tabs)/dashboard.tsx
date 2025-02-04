@@ -20,7 +20,15 @@ import {
   AccordionContentText,
   AccordionIcon,
 } from '@/components/ui/accordion';
-import { appleBodyCharacteristic, pearBodyCharacteristic } from '@/constants';
+import { appleBodyCharacteristic, bestAppleProducts, bestHourglassProducts, bestInvertedTriangleProducts, bestPearProducts, bestRectangleProducts, hourglassBodyCharacteristic, invertedTriangleBodyCharacteristic, pearBodyCharacteristic, rectangleBodyCharacteristic } from '@/constants';
+import { currentIPAddress } from '@/utils/helper';
+import {
+Triangle,
+Hourglass,
+RectangleVertical,
+Apple,
+Shirt,
+} from "lucide-react-native"
 
 const Dashboard = () => {
   const { user, token, signOut } = useAuth();
@@ -39,16 +47,9 @@ const Dashboard = () => {
 
   const userId = user?._id;
 
-
-  useEffect(() => {
-    if (userId) {
-      getUserInfo();
-    }
-  }, []);
-
   const getUserInfo = async () => {
     try {
-      const response = await axios.get(`http://192.168.1.59:3000/api/user/${userId}`, {
+      const response = await axios.get(`${currentIPAddress}:3000/api/user/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -61,6 +62,11 @@ const Dashboard = () => {
     }
   }
 
+  useEffect(() => {
+    if (userId) {
+      getUserInfo();
+    }
+  }, [userId]);
 
 
 
@@ -84,7 +90,7 @@ const Dashboard = () => {
                 {({ isExpanded }) => {
                   return (
                     <>
-                    <AccordionTitleText>Your Body Shape is: {userProfile?.bodyShape}</AccordionTitleText>
+                    <AccordionTitleText className="font-poppins-bold text-lg">Your Body Shape is: {userProfile?.bodyShape}</AccordionTitleText>
                     {isExpanded ? (
                     <AccordionIcon as={ChevronUpIcon} />
                     ) : (
@@ -99,23 +105,96 @@ const Dashboard = () => {
             <AccordionContent>
               <AccordionContentText className="flex flex-col justify-between items-center">
                 <View>
-                  <Text>Characteristics of {userProfile?.bodyShape} include:</Text>
+                  <Text className="font-poppins-medium mb-2">{userProfile?.bodyShape} body shape characteristics:</Text>
 
                   {userProfile?.bodyShape === "Pear" ? (
                       <FlatList
                         data={pearBodyCharacteristic.map((characteristic, idx) => ({ key: idx.toString(), characteristic }))}
-                        renderItem={({ item }) => <Text>{item.characteristic}</Text>}
+                        renderItem={({ item }) =>
+                        <View className="flex flex-row items-center gap-2">
+                          <Icon className="text-typography-500" as={Triangle} />
+                          <Text className="font-poppins">{item.characteristic}</Text>
+                        </View>
+                        }
                       />
                   ) : userProfile?.bodyShape === "Apple" ? (
                     <FlatList
                       data={appleBodyCharacteristic.map((characteristic, idx) => ({ key: idx.toString(), characteristic }))}
                       renderItem={({ item }) => <Text>{item.characteristic}</Text>}
                     />
-                  ) : null }
-                </View>
+                  ) : userProfile?.bodyShape === "Rectangle" ? (
+                    <FlatList
+                      data={rectangleBodyCharacteristic.map((characteristic, idx) => ({ key: idx.toString(), characteristic }))}
+                      renderItem={({ item }) => <Text>{item.characteristic}</Text>}
+                    />
+                  ) : userProfile?.bodyShape === "Inverted Triangle" ? (
+                    <FlatList
+                      data={invertedTriangleBodyCharacteristic.map((characteristic, idx) => ({ key: idx.toString(), characteristic }))}
+                      renderItem={({ item }) => <Text>{item.characteristic}</Text>}
+                    />
+                  ) : userProfile?.bodyShape === "Hourglass" ? (
+                    <FlatList
+                      data={hourglassBodyCharacteristic.map((characteristic, idx) => ({ key: idx.toString(), characteristic }))}
+                      renderItem={({ item }) => <Text>{item.characteristic}</Text>}
+                    />
+                  ) : null}
 
+                  <View className="mt-4">
+                    <Text className="font-poppins-medium">Common clothing items include:</Text>
+                      {userProfile?.bodyShape === "Pear" ? (
+                        <FlatList
+                        data={bestPearProducts.map((product, idx) => ({ key: idx.toString(), product }))}
+                        renderItem={({ item }) =>
+                        <View className="flex flex-row items-center gap-2">
+                          <Icon className="text-typography-500" as={Shirt} />
+                          <Text className="font-poppins">{item.product}</Text>
+                        </View>
+                        }
+                      />
+                      ) : userProfile?.bodyShape === "Apple" ? (
+                        <FlatList
+                        data={bestAppleProducts.map((product, idx) => ({ key: idx.toString(), product }))}
+                        renderItem={({ item }) =>
+                        <View className="flex flex-row items-center gap-2">
+                          <Icon className="text-typography-500" as={Shirt} />
+                          <Text className="font-poppins">{item.product}</Text>
+                        </View>
+                        }
+                      />
+                      ) : userProfile?.bodyShape === "Rectangle" ? (
+                        <FlatList
+                        data={bestRectangleProducts.map((product, idx) => ({ key: idx.toString(), product }))}
+                        renderItem={({ item }) =>
+                        <View className="flex flex-row items-center gap-2">
+                          <Icon className="text-typography-500" as={Shirt} />
+                          <Text className="font-poppins">{item.product}</Text>
+                        </View>
+                        }
+                      />
+                      ) : userProfile?.bodyShape === "Inverted Triangle" ? (
+                        <FlatList
+                        data={bestInvertedTriangleProducts.map((product, idx) => ({ key: idx.toString(), product }))}
+                        renderItem={({ item }) =>
+                        <View className="flex flex-row items-center gap-2">
+                          <Icon className="text-typography-500" as={Shirt} />
+                          <Text className="font-poppins">{item.product}</Text>
+                        </View>
+                        }
+                      />
+                      ) : userProfile?.bodyShape === "Hourglass" ? (
+                        <FlatList
+                        data={bestHourglassProducts.map((product, idx) => ({ key: idx.toString(), product }))}
+                        renderItem={({ item }) =>
+                        <View className="flex flex-row items-center gap-2">
+                          <Icon className="text-typography-500" as={Shirt} />
+                          <Text className="font-poppins">{item.product}</Text>
+                        </View>
+                        }
+                      />
+                      ) : null}
+                  </View>
 
-                <View className="pt-5">
+                  <View className="mt-4">
                   <Button onPress={() => setBodyShapeShowModal(true)} className="bg-[#04BF9D]">
                     <ButtonText>Calculate Body Shape</ButtonText>
                   </Button>
@@ -148,7 +227,10 @@ const Dashboard = () => {
                       </ModalFooter>
                     </ModalContent>
                   </Modal>
+                  </View>
                 </View>
+
+
               </AccordionContentText>
             </AccordionContent>
           </AccordionItem>

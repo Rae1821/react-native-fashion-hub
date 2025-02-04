@@ -17,6 +17,7 @@ import { useSession } from '@/lib/ctx';
 import axios from 'axios';
 import Checkbox from 'expo-checkbox';
 import * as SecureStore from 'expo-secure-store';
+import { currentIPAddress } from '@/utils/helper';
 
 const SignIn = () => {
   const [email, setEmail] = useState('');
@@ -74,7 +75,7 @@ const SignIn = () => {
     // 192.168.1.59 - goodmans
     // 192.168.0.42 - home
     try {
-      const response = await axios.post('http://192.168.1.59:3000/api/signin', {
+      const response = await axios.post(`${currentIPAddress}:3000/api/signin`, {
         email,
         password,
       });

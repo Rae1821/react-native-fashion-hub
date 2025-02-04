@@ -29,3 +29,6 @@ export const fetchUser = async (id: string) => {
         console.log("Error fetching user", error);
     }
 }
+
+
+export const currentIPAddress = "http://192.168.1.61";

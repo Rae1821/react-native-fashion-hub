@@ -8,6 +8,7 @@ import { Heading } from '@/components/ui/heading';
 import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { currentIPAddress } from '@/utils/helper';
 
 
 const SignUp = () => {
@@ -24,7 +25,7 @@ const SignUp = () => {
         setIsLoading(true);
 
       try {
-        const resp = await axios.post('http://192.168.0.42:3000/api/signup', { name, email, password });
+        const resp = await axios.post(`${currentIPAddress}:3000/api/signup`, { name, email, password });
         if (resp.data) {
           // console.log(resp.data)
 
