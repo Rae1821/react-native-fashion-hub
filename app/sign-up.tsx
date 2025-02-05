@@ -8,7 +8,7 @@ import { Heading } from '@/components/ui/heading';
 import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { currentIPAddress } from '@/utils/helper';
+import { currentIPAddress } from '@/lib/helper';
 
 
 const SignUp = () => {
@@ -16,6 +16,7 @@ const SignUp = () => {
       const [email, setEmail] = useState('');
       const [password, setPassword] = useState('');
       const [isLoading, setIsLoading] = useState(false);
+
 
     const handleSubmit = async () => {
         if (name === '' || email === '' || password === '') {
@@ -25,7 +26,7 @@ const SignUp = () => {
         setIsLoading(true);
 
       try {
-        const resp = await axios.post(`${currentIPAddress}:3000/api/signup`, { name, email, password });
+        const resp = await axios.post(`http://${currentIPAddress}:3000/api/signup`, { name, email, password });
         if (resp.data) {
           // console.log(resp.data)
 

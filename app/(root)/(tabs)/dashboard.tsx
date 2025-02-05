@@ -28,11 +28,13 @@ RectangleVertical,
 Apple,
 Shirt,
 } from "lucide-react-native"
+import { currentIPAddress } from '@/lib/helper';
 
 const Dashboard = () => {
   const { user, token, signOut } = useAuth();
     const [showBodyShapeModal, setBodyShapeShowModal] = useState(false);
     const [showFashionStyleModal, setFashionStyleShowModal] = useState(false);
+
 
     interface UserProfile {
       name: string;
@@ -48,7 +50,7 @@ const Dashboard = () => {
 
   const getUserInfo = async () => {
     try {
-      const response = await axios.get(`${process.env.CURRENT_IP_ADDRESS}:3000/api/user/${userId}`, {
+      const response = await axios.get(`http://${currentIPAddress}:3000/api/user/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -65,7 +67,7 @@ const Dashboard = () => {
     if (userId) {
       getUserInfo();
     }
-  }, [userId]);
+  }, []);
 
 
 
@@ -83,17 +85,15 @@ const Dashboard = () => {
         <View>
           <Text className="font-poppins-medium text-lg">Hello {user?.name}</Text>
           <Text className="font-poppins-light text-xs">Discover your style</Text>
-
         </View>
-
       </View>
 
-      {/* <Text>{JSON.stringify(userProfile)}</Text> */}
+      {/* <Text>{JSON.stringify(userProfile)}</Text>÷ */}
 
       <View className="flex flex-col items-center justify-center mt-10">
         <Accordion className="w-[95%] p-2 border border-outline-50 bg-white shadow-sm rounded-lg" type="single">
           <AccordionItem value="bodyShape" className="">
-            <AccordionHeader className="">
+            <AccordionHeader className="py-4">
               <AccordionTrigger>
                 {({ isExpanded }) => {
                   return (
@@ -237,8 +237,6 @@ const Dashboard = () => {
                   </Modal>
                   </View>
                 </View>
-
-
               </AccordionContentText>
             </AccordionContent>
           </AccordionItem>
@@ -270,7 +268,7 @@ const Dashboard = () => {
         size="md"
       >
         <ModalBackdrop />
-        <ModalContent>
+        <ModalContent className="">
           <ModalHeader>
             <Heading size="md" className="font-poppins-bold">
               Find your Fashion Style

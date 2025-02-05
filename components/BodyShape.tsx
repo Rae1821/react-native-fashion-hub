@@ -7,6 +7,7 @@ import axios from 'axios';
 // import { updateUser } from '@/utils/helper';
 // import { useAuth } from '@/lib/ctx';
 import Checkbox from 'expo-checkbox';
+import { currentIPAddress } from '@/lib/helper';
 
 
 interface BodyShapeProps {
@@ -60,7 +61,7 @@ const BodyShape: React.FC<BodyShapeProps> = ({ userId, token }) => {
 // Save shape to database
   const handleSaveShape = async () => {
     try {
-      const response = await axios.put(`${process.env.CURRENT_IP_ADDRESS}:3000/api/user/${userId}`, { bodyShape: shapeResults }, {
+      const response = await axios.put(`http://${currentIPAddress}:3000/api/user/${userId}`, { bodyShape: shapeResults }, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
