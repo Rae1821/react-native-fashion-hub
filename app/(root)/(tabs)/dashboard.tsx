@@ -21,7 +21,6 @@ import {
   AccordionIcon,
 } from '@/components/ui/accordion';
 import { appleBodyCharacteristic, bestAppleProducts, bestHourglassProducts, bestInvertedTriangleProducts, bestPearProducts, bestRectangleProducts, hourglassBodyCharacteristic, invertedTriangleBodyCharacteristic, pearBodyCharacteristic, rectangleBodyCharacteristic } from '@/constants';
-import { currentIPAddress } from '@/utils/helper';
 import {
 Triangle,
 Hourglass,
@@ -49,7 +48,7 @@ const Dashboard = () => {
 
   const getUserInfo = async () => {
     try {
-      const response = await axios.get(`${currentIPAddress}:3000/api/user/${userId}`, {
+      const response = await axios.get(`${process.env.CURRENT_IP_ADDRESS}:3000/api/user/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -73,24 +72,33 @@ const Dashboard = () => {
 
   return (
     <SafeAreaView className="bg-white h-full">
-      <View className="mt-10 px-4 flex items-center justify-between flex-row">
-        <Text className="font-poppins-medium text-lg">{user?.name}'s Dashboard</Text>
-        <Button onPress={signOut} variant="outline" size="sm">
+      <View className="p-4 flex flex-row justify-between items-center border-b border-gray-100">
+        <Text className="mt-4 font-poppins-bold text-xl">Fashion Hub</Text>
+        <Button onPress={signOut} variant="link" size="sm">
           <ButtonText>Sign Out</ButtonText>
         </Button>
+      </View>
+      <View className="mt-10 px-4 flex items-center gap-2 flex-row">
+        <Text className="bg-gray-200 h-10 w-10 rounded-full"></Text>
+        <View>
+          <Text className="font-poppins-medium text-lg">Hello {user?.name}</Text>
+          <Text className="font-poppins-light text-xs">Discover your style</Text>
+
+        </View>
+
       </View>
 
       {/* <Text>{JSON.stringify(userProfile)}</Text> */}
 
       <View className="flex flex-col items-center justify-center mt-10">
-        <Accordion className="w-[95%] p-2 border border-outline-50 bg-slate-50 shadow-sm rounded-lg" type="single">
-          <AccordionItem value="bodyShape" className="bg-slate-50">
+        <Accordion className="w-[95%] p-2 border border-outline-50 bg-white shadow-sm rounded-lg" type="single">
+          <AccordionItem value="bodyShape" className="">
             <AccordionHeader className="">
               <AccordionTrigger>
                 {({ isExpanded }) => {
                   return (
                     <>
-                    <AccordionTitleText className="font-poppins-bold text-lg">Your Body Shape is: {userProfile?.bodyShape}</AccordionTitleText>
+                    <AccordionTitleText className="font-poppins-bold text-lg bg-white">Your Body Shape is: {userProfile?.bodyShape}</AccordionTitleText>
                     {isExpanded ? (
                     <AccordionIcon as={ChevronUpIcon} />
                     ) : (

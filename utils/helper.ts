@@ -30,5 +30,3 @@ export const fetchUser = async (id: string) => {
     }
 }
 
-
-export const currentIPAddress = "http://192.168.1.61";
