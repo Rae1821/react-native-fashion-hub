@@ -15,6 +15,11 @@ interface FashionStyleProps {
 const FashionStyle: React.FC<FashionStyleProps> = ({ userId, token}) => {
     const [selectedOption, setSelectedOption] = React.useState<string | null>(null);
 
+    const handleSubmit = () => {
+        console.log(selectedOption);
+    }
+
+
 
   return (
     <View>
@@ -29,7 +34,7 @@ const FashionStyle: React.FC<FashionStyleProps> = ({ userId, token}) => {
                     </View>
 
                         <View>
-                            <Select>
+                            <Select onValueChange={(value) => setSelectedOption(value)}>
                                 <SelectTrigger variant="outline" size="md" className="flex flex-row justify-between" >
                                     <SelectInput placeholder="Select option" />
                                     <SelectIcon className="mr-3" as={ChevronDownIcon} />
@@ -41,7 +46,10 @@ const FashionStyle: React.FC<FashionStyleProps> = ({ userId, token}) => {
                                         <SelectDragIndicator />
                                     </SelectDragIndicatorWrapper>
                                     {question.answers.map((answer, index) => (
-                                    <SelectItem key={index} label={answer.text} value={answer.text} />
+                                    <SelectItem
+                                        key={index}
+                                        label={answer.text}
+                                        value={answer.text} />
                                 ))}
                                     </SelectContent>
                                 </SelectPortal>
@@ -52,7 +60,7 @@ const FashionStyle: React.FC<FashionStyleProps> = ({ userId, token}) => {
         </View>
         <View>
             <Button>
-                <ButtonText>Submit</ButtonText>
+                <ButtonText onPress={handleSubmit}>Submit</ButtonText>
             </Button>
             <Button variant="link">
                 <ButtonText>Start over</ButtonText>

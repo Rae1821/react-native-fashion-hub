@@ -48,9 +48,9 @@ const BodyShape: React.FC<BodyShapeProps> = ({ userId, token }) => {
         console.log("Please fill in all fields");
       }
 
-      if(isChecked) {
+
         handleSaveShape();
-      }
+
       return shapeResults;
     } catch (err) {
       console.log(err);
@@ -127,14 +127,14 @@ const BodyShape: React.FC<BodyShapeProps> = ({ userId, token }) => {
           />
         </Input>
       </VStack>
-      <View className="flex flex-row items-center mt-5 gap-2">
+      {/* <View className="flex flex-row items-center mt-5 gap-2">
        <Checkbox
           value={isChecked}
           onValueChange={setChecked}
           color={isChecked ? 'black' : undefined}
         />
         <Text className="font-poppins">Save results to dashboard</Text>
-      </View>
+      </View> */}
       <View className="flex justify-end gap-4 items-center mt-5 flex-row">
         <Button onPress={handleReset} variant="outline">
             <ButtonText>Reset</ButtonText>
@@ -144,10 +144,12 @@ const BodyShape: React.FC<BodyShapeProps> = ({ userId, token }) => {
           </Button>
       </View>
 
+    {shapeResults && (
       <View className="mt-10 flex flex-row items-center">
         <Text className="font-poppins">Your body shape is: {" "}</Text>
         <Text className="font-poppins-bold text-lg">{shapeResults}</Text>
       </View>
+        )}
     </View>
   )
 }

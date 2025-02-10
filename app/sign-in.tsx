@@ -81,7 +81,7 @@ const SignIn = () => {
       });
       const { token, user } = response.data;
       await signIn(token, user);
-      router.replace('/dashboard');
+      router.replace('/onboarding');
     } catch (error) {
       Alert.alert('Error ', 'An error occurred');
     } finally {
@@ -94,13 +94,17 @@ const SignIn = () => {
       <View className="px-10 mt-12">
         <VStack className="max-w-[440px] w-full" space="md">
           <VStack className="md:items-center" space="md">
-            <Pressable
-              onPress={() => {
-                router.back();
-              }}
-            >
-              <Icon as={ArrowLeftIcon} className="text-background-800" />
-            </Pressable>
+              <Pressable
+                onPress={() => {
+                  router.back();
+                }}
+                className="flex flex-row items-center gap-2"
+              >
+                <Icon as={ArrowLeftIcon} className="text-background-800" />
+                <Text className="font-poppins">Back</Text>
+              </Pressable>
+
+
             <VStack>
               <Heading
                 className="text-center font-poppins-extrabold"
