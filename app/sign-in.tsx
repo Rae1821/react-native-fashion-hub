@@ -9,7 +9,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { VStack } from '@/components/ui/vstack';
-import { router } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { ArrowLeftIcon, Icon } from '@/components/ui/icon';
 import { Heading } from '@/components/ui/heading';
 import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input';
@@ -187,6 +187,7 @@ const SignIn = () => {
             </TouchableOpacity>
           </VStack>
         </VStack>
+        <Link href="/style-quiz">Style quiz</Link>
       </View>
     </SafeAreaView>
   );
