@@ -4,6 +4,7 @@ import { questions } from '@/constants';
 import { Button, ButtonText } from './ui/button';
 import { Radio, RadioGroup, RadioIcon, RadioIndicator, RadioLabel } from './ui/radio';
   import { CircleIcon } from "@/components/ui/icon"
+import { Divider } from './ui/divider';
 
 
 type Answer = {
@@ -25,23 +26,17 @@ const FashionStyle: React.FC<FashionStyleProps> = ({ userId, token}) => {
 
 
 
-
-    // map through the questions and answers
-    // when a user clicks an answer for each question, that answer is added to the selectedAnswers array
-    // the selectedAnswers array is then used to calculate the user's fashion style
-
-
     const handleSelect = (questionId: number, value: string) => {
         setSelectedAnswer((prev) => ({ ...prev, [questionId]: value }));
         setAnswersArr((prev) => {
             const updatedAnswers = [...prev];
             updatedAnswers[questionId] = value;
+            handleFindStyle(updatedAnswers)
             return updatedAnswers;
         });
-        handleFindStyle();
     }
 
-    const handleFindStyle = () => {
+    const handleFindStyle = (updatedAnswers: string[]) => {
         const style = {
             Boho: 0,
             Chic: 0,
@@ -50,51 +45,48 @@ const FashionStyle: React.FC<FashionStyleProps> = ({ userId, token}) => {
             Edgy: 0,
         };
 
-        answersArr.map((answer) => {
-            if (answer === 'Boho') {
-                style.Boho += 1;
-            } else if (answer === 'Chic') {
-                style.Chic += 1;
-            } else if (answer === 'Classic') {
+        for(let i = 0; i < updatedAnswers.length; i++) {
+            if (answersArr[i] === 'classic') {
                 style.Classic += 1;
-            } else if (answer === 'Sporty') {
+            } else if (answersArr[i] === 'boho') {
+                style.Boho += 1;
+            } else if (answersArr[i] === 'chic') {
+                style.Chic += 1;
+            } else if (answersArr[i] === 'sporty') {
                 style.Sporty += 1;
-            } else if (answer === 'Edgy') {
+            } else if (answersArr[i] === 'edgy') {
                 style.Edgy += 1;
             }
-            setStyleObj(style);
-        })
-
-        // answersArr.forEach((answerObj) => {
-        //     const answer = answerObj.answer;
-        //     if (answer === 'Boho') {
-        //         style.Boho += 1;
-        //     } else if (answer === 'Chic') {
-        //         style.Chic += 1;
-        //     } else if (answer === 'Classic') {
-        //         style.Classic += 1;
-        //     } else if (answer === 'Sporty') {
-        //         style.Sporty += 1;
-        //     } else if (answer === 'Edgy') {
-        //         style.Edgy += 1;
-        //     }
-
-        //     setStyleObj(style);
-        // });
+            setStyleObj(style)
+        }
     }
 
-    const handleSubmit = (obj: any) => {
+
+    const handleSubmit = (obj: { [key: string]: number }) => {
         let highestCategory = 0;
         let winningCategory = '';
+        let tiedCategories: string[] = [];
 
         for (const style in obj) {
-            if (obj[style] > highestCategory) {
-                highestCategory = obj[style];
-                winningCategory = style;
-            }
+          if (obj[style] > highestCategory) {
+            highestCategory = obj[style];
+            winningCategory = style;
+            tiedCategories = [style];
+          } else if (obj[style] === highestCategory) {
+            tiedCategories.push(style);
+          }
         }
-        return setStyleResult(winningCategory);
-    }
+
+        if (tiedCategories.length > 1) {
+          console.log('Tie between categories:', tiedCategories);
+          // Handle tie logic here, e.g., randomly select one, prompt user, etc.
+          setStyleResult(`Tie between: ${tiedCategories.join(' & ')}`);
+        } else {
+          setStyleResult(winningCategory);
+        }
+      };
+
+
 
     const handleStartOver = () => {
         setStyleObj({});
@@ -117,12 +109,6 @@ const FashionStyle: React.FC<FashionStyleProps> = ({ userId, token}) => {
                         <Text className="font-poppins-bold">{question.id}.</Text>
                         <Text className="font-poppins-medium">{question.text}</Text>
                     </View>
-
-
-                    {/* <Text key={index}>{index}{answer.value}{answer.text}</Text> */}
-
-
-
                         <RadioGroup
                             key={question.id}
                             value={selectedAnswer[question.id] || ''}
@@ -145,18 +131,26 @@ const FashionStyle: React.FC<FashionStyleProps> = ({ userId, token}) => {
                 </View>
             ))}
         </View>
-        <View>
-            <Text>{answersArr}</Text>
-            <Button>
+        <View className="mt-4 flex flex-row items-center justify-between">
+            <Button variant="solid">
                 <ButtonText onPress={() => {handleSubmit(styleObj)}}>Submit</ButtonText>
             </Button>
-            <Button variant="link" onPress={handleStartOver}>
+            <Button variant="outline" onPress={handleStartOver}>
                 <ButtonText>Start over</ButtonText>
             </Button>
         </View>
+        <Divider className="my-8" />
         <View>
-            <Text>{styleResult}</Text>
-            <Text>{JSON.stringify(styleObj)}</Text>
+            {styleResult && (
+                <View>
+                    <Text className="font-poppins-medium text-2xl">Your style is: {styleResult}</Text>
+                </View>
+            )}
+        </View>
+        <View>
+            {/* <Text>{styleResult}</Text> */}
+            {/* <Text>{JSON.stringify(answersArr)}</Text> */}
+            {/* <Text>{JSON.stringify(styleObj)}</Text> */}
 
         </View>
     </ScrollView>
