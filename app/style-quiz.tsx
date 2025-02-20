@@ -24,12 +24,12 @@ const StyleQuizPage = () => {
                 className="flex flex-row items-center gap-2"
               >
                 <Icon as={ArrowLeftIcon} className="text-background-800" />
-                <Text className="font-poppins-medium text-sm">Back</Text>
+                <Text className="font-poppins-medium">Back</Text>
               </Pressable>
           </View>
           <View className="mt-8">
-            <Heading>Almost done!</Heading>
-            <Text>Now let's find your fashion style. Answer the questions below as best as you can to uncover your personal fashion style preference.</Text>
+            <Heading className="font-poppins-bold">Almost done {user?.name}!</Heading>
+            <Text className="font-poppins leading-loose">Now let's find your fashion style. Answer the questions below as best as you can to uncover your personal fashion style preference.</Text>
           </View>
           <View>
           {userId && token && (
@@ -37,9 +37,14 @@ const StyleQuizPage = () => {
           )}
           </View>
 
-          <View className="mt-12 flex flex-row items-center justify-end gap-2 mr-8">
-            <Link href="/dashboard" className="font-poppins-medium text-xl">Next</Link>
-            <Icon as={ArrowRightIcon} className="text-background-800" />
+          <View className="mt-10 flex flex-row items-center justify-end gap-2 mr-8">
+            <Pressable
+              onPress={() => router.push('/dashboard')}
+              className="flex flex-row items-center gap-2"
+              >
+              <Text className="font-poppins-medium text-sm">Next</Text>
+              <Icon as={ArrowRightIcon} className="text-background-800" />
+            </Pressable>
           </View>
 
       </ScrollView>

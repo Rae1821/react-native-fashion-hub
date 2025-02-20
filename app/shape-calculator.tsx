@@ -1,9 +1,9 @@
-import { View, Text } from 'react-native'
+import { View, Text, Pressable } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useAuth } from '@/lib/ctx';
 import BodyShape from '@/components/BodyShape';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { ArrowRightIcon, Icon } from '@/components/ui/icon';
 
 const ShapeCalculatorPage = () => {
@@ -25,10 +25,14 @@ const ShapeCalculatorPage = () => {
 
       </View>
 
-      <View className="mt-24 flex flex-row items-center justify-end gap-2 mr-8">
-        <Link href="/style-quiz" className="font-poppins-medium underline text-xl">Next</Link>
-        <Icon as={ArrowRightIcon} className="text-background-800" />
-
+      <View className="mt-12 flex flex-row items-center justify-end gap-2 mr-8">
+        <Pressable
+          onPress={() => router.push('/style-quiz')}
+          className="flex flex-row items-center gap-2"
+          >
+          <Text className="font-poppins-medium">Next</Text>
+          <Icon as={ArrowRightIcon} className="text-background-800" />
+        </Pressable>
       </View>
 
     </SafeAreaView>

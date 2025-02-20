@@ -187,7 +187,6 @@ const SignIn = () => {
             </TouchableOpacity>
           </VStack>
         </VStack>
-        <Link href="/style-quiz">Style quiz</Link>
       </View>
     </SafeAreaView>
   );

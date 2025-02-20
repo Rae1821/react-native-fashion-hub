@@ -98,9 +98,7 @@ const FashionStyle: React.FC<FashionStyleProps> = ({ userId, token}) => {
 
 
   return (
-    <ScrollView className="p-4">
-        <Text className="font-poppins-light text-sm">Select the answer that most represents you</Text>
-
+    <ScrollView className="">
         <View className="p-2">
             {questions.map((question, index) => (
 
@@ -131,12 +129,12 @@ const FashionStyle: React.FC<FashionStyleProps> = ({ userId, token}) => {
                 </View>
             ))}
         </View>
-        <View className="mt-4 flex flex-row items-center justify-between">
-            <Button variant="solid">
-                <ButtonText onPress={() => {handleSubmit(styleObj)}}>Submit</ButtonText>
-            </Button>
+        <View className="mt-4 flex flex-row items-center justify-end gap-4">
             <Button variant="outline" onPress={handleStartOver}>
                 <ButtonText>Start over</ButtonText>
+            </Button>
+            <Button variant="solid" className="px-6">
+                <ButtonText onPress={() => {handleSubmit(styleObj)}}>Submit</ButtonText>
             </Button>
         </View>
         <Divider className="my-8" />

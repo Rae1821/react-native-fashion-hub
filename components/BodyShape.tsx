@@ -8,6 +8,8 @@ import axios from 'axios';
 // import { useAuth } from '@/lib/ctx';
 import Checkbox from 'expo-checkbox';
 import { currentIPAddress } from '@/lib/helper';
+import { Divider } from './ui/divider';
+import { set } from 'react-hook-form';
 
 
 interface BodyShapeProps {
@@ -17,39 +19,46 @@ interface BodyShapeProps {
 
 const BodyShape: React.FC<BodyShapeProps> = ({ userId, token }) => {
   const [shapeResults, setShapeResults] = useState('');
-  const [shoulders, setShoulders] = useState('');
-  const [waist, setWaist] = useState('');
-  const [hips, setHips] = useState('');
-  const [isChecked, setChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
+  const [measurements, setMeasurements] = useState({
+    shoulders: '',
+    waist: '',
+    hips: '',
+  });
 
 
   const handleCalculateShape = () => {
+    const shoulders = measurements.shoulders;
+    const waist = measurements.waist;
+    const hips = measurements.hips;
 
     const shouldersNum = parseInt(shoulders);
     const waistNum = parseInt(waist);
     const hipsNum = parseInt(hips);
 
+    let calculatedShape = '';
+
     try {
       if (hipsNum / shouldersNum >= 1.05 && waist < hips) {
-        setShapeResults("Pear");
+        calculatedShape = "Pear";
       } else if (shouldersNum / hipsNum >= 1.05 && waistNum === shouldersNum) {
-        setShapeResults("Apple");
+        calculatedShape = "Apple";
       } else if (
         waistNum / shouldersNum <= 0.75 &&
         waistNum / hipsNum < 0.75 &&
         hipsNum * 0.95 < shouldersNum
       ) {
-        setShapeResults("Hourglass");
+        calculatedShape = "Hourglass";
       } else if (shouldersNum / hipsNum >= 1.05 && waistNum < shouldersNum) {
-        setShapeResults("Triangle");
+        calculatedShape = "Triangle";
       } else if (waistNum / shouldersNum >= 0.75 && shouldersNum * 0.95 < hipsNum) {
-        setShapeResults("Rectangle");
+        calculatedShape = "Rectangle";
       } else if (shoulders === null || waist === null || hips === null) {
         console.log("Please fill in all fields");
       }
 
-
-        handleSaveShape();
+      setShapeResults(calculatedShape);
+      handleSaveShape(calculatedShape);
 
       return shapeResults;
     } catch (err) {
@@ -59,22 +68,31 @@ const BodyShape: React.FC<BodyShapeProps> = ({ userId, token }) => {
 
 
 // Save shape to database
-  const handleSaveShape = async () => {
-    try {
-      const response = await axios.put(`http://${currentIPAddress}:3000/api/user/${userId}`, { bodyShape: shapeResults }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log('User updated successfully:', response.data);
-    } catch (error) {
-      console.error('Error updating user:', error);
+  const handleSaveShape = async (shape: string) => {
+    if(isChecked) {
+      try {
+        const response = await axios.put(`http://${currentIPAddress}:3000/api/user/${userId}`, { bodyShape: shape }, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log('User updated successfully:', response.data);
+      } catch (error) {
+        console.error('Error updating user:', error);
+      }
     }
+
   };
 
 
   const handleReset = () => {
     setShapeResults("");
+    setMeasurements({
+      shoulders: '',
+      waist: '',
+      hips: '',
+    });
+    setIsChecked(false);
   };
 
   return (
@@ -90,8 +108,8 @@ const BodyShape: React.FC<BodyShapeProps> = ({ userId, token }) => {
           >
             <InputField
               placeholder="39"
-              value={shoulders}
-              onChangeText={text => setShoulders(text)}
+              value={measurements.shoulders}
+              onChangeText={text => setMeasurements({ ...measurements, shoulders: text })}
             />
           </Input>
       </VStack>
@@ -106,8 +124,8 @@ const BodyShape: React.FC<BodyShapeProps> = ({ userId, token }) => {
         >
           <InputField
             placeholder="29"
-            value={waist}
-            onChangeText={text => setWaist(text)}
+            value={measurements.waist}
+            onChangeText={text => setMeasurements({ ...measurements, waist: text })}
           />
         </Input>
       </VStack>
@@ -122,19 +140,19 @@ const BodyShape: React.FC<BodyShapeProps> = ({ userId, token }) => {
         >
           <InputField
             placeholder="41"
-            value={hips}
-            onChangeText={text => setHips(text)}
+            value={measurements.hips}
+            onChangeText={text => setMeasurements({ ...measurements, hips: text })}
           />
         </Input>
       </VStack>
-      {/* <View className="flex flex-row items-center mt-5 gap-2">
+      <View className="flex flex-row items-center mt-5 gap-2">
        <Checkbox
           value={isChecked}
-          onValueChange={setChecked}
+          onValueChange={setIsChecked}
           color={isChecked ? 'black' : undefined}
         />
         <Text className="font-poppins">Save results to dashboard</Text>
-      </View> */}
+      </View>
       <View className="flex justify-end gap-4 items-center mt-5 flex-row">
         <Button onPress={handleReset} variant="outline">
             <ButtonText>Reset</ButtonText>
@@ -144,10 +162,12 @@ const BodyShape: React.FC<BodyShapeProps> = ({ userId, token }) => {
           </Button>
       </View>
 
+      <Divider className="my-8" />
+
     {shapeResults && (
       <View className="mt-10 flex flex-row items-center">
         <Text className="font-poppins">Your body shape is: {" "}</Text>
-        <Text className="font-poppins-bold text-lg">{shapeResults}</Text>
+        <Text className="font-poppins-bold text-2xl">{shapeResults}</Text>
       </View>
         )}
     </View>
